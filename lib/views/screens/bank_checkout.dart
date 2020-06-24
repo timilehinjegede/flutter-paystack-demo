@@ -11,6 +11,8 @@ class BankCheckoutScreen extends StatefulWidget {
 }
 
 class _BankCheckoutScreenState extends State<BankCheckoutScreen> {
+  bool _hasTransactionStarted = false;
+
   @override
   void initState() {
     PaystackPlugin.initialize(publicKey: APIService.publicKey);
@@ -18,6 +20,9 @@ class _BankCheckoutScreenState extends State<BankCheckoutScreen> {
   }
 
   _startCharge() async {
+    setState(() {
+      _hasTransactionStarted = !_hasTransactionStarted;
+    });
     var values = await APIService.initTransaction(APIService.secretKey);
 
     Charge _charge = Charge()
@@ -31,12 +36,14 @@ class _BankCheckoutScreenState extends State<BankCheckoutScreen> {
       method: CheckoutMethod.bank,
     );
 
-
-    if (_checkoutResponse.status == true){
+    if (_checkoutResponse.status == true) {
       AppDialogs.showSuccessDialog(context, _checkoutResponse.message);
     } else {
       AppDialogs.showErrorDialog(context, _checkoutResponse.message);
     }
+    setState(() {
+      _hasTransactionStarted = !_hasTransactionStarted;
+    });
   }
 
   @override
@@ -59,7 +66,11 @@ class _BankCheckoutScreenState extends State<BankCheckoutScreen> {
               _startCharge();
             },
             child: Center(
-              child: Text('Charge'),
+              child: _hasTransactionStarted
+                  ? CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                  : Text('Charge'),
             ),
           ),
         )),

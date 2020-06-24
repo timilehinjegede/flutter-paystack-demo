@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 
-class BankCheckoutScreen extends StatelessWidget {
+class BankCheckoutScreen extends StatefulWidget {
 
   static final String routeName = 'bankcheckoutscreen';
+
+  @override
+  _BankCheckoutScreenState createState() => _BankCheckoutScreenState();
+}
+
+class _BankCheckoutScreenState extends State<BankCheckoutScreen> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

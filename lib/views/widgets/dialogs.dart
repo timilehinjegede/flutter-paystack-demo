@@ -32,6 +32,11 @@ class AppDialogs extends StatelessWidget {
                   ),
                 ),
 
+
+                SizedBox(
+                  height: 20,
+                ),
+
                 Text(
                   content,
                   style: TextStyle(
@@ -69,6 +74,10 @@ class AppDialogs extends StatelessWidget {
                     child: Center(
                       child: Icon(Icons.close, color: Colors.red, size: 20,),
                     ),
+                  ),
+
+                  SizedBox(
+                    height: 20,
                   ),
 
                   Text(

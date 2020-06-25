@@ -12,11 +12,37 @@ class CustomUICheckoutScreen extends StatelessWidget {
             'Custom UI Checkout Screen'
         ),
       ),
-      body: Center(
-        child: Text(
-            'Custom UI Checkout Screen'
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Column(
+          children: <Widget>[
+
+            SizedBox(height: 25,),
+
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.black87.withOpacity(0.8),
+              ),
+              child: Column(
+                children: <Widget>[
+
+                  // master card like logo
+                  Container(
+                    height: 25,
+                    width: 25,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.orange
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
         ),
-      ),
+      )
     );
   }
 }

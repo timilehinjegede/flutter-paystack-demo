@@ -1,14 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_paystack/flutter_paystack.dart';
+import 'package:paystack_demo/services/api_service.dart';
+import 'package:paystack_demo/views/widgets/dialogs.dart';
 
-class CustomUICheckoutScreen extends StatelessWidget {
+class CustomUICheckoutScreen extends StatefulWidget {
   static final String routeName = 'customuicheckoutscreen';
-  // controller
+
+  @override
+  _CustomUICheckoutScreenState createState() => _CustomUICheckoutScreenState();
+}
+
+class _CustomUICheckoutScreenState extends State<CustomUICheckoutScreen> {
   var _customerEmailController = TextEditingController();
+
   var _cardNumberController = TextEditingController();
+
   var _validThruController = TextEditingController();
+
   var _cvvController = TextEditingController();
 
   bool _hasTransactionStarted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    PaystackPlugin.initialize(publicKey: APIService.publicKey);
+  }
+
+  PaymentCard _getCardFromUI() {
+    return PaymentCard(
+      number: _cardNumberController.text,
+      cvc: _cvvController.text,
+      expiryMonth: int.parse(_validThruController.text),
+      expiryYear: int.parse(_validThruController.text),
+    );
+  }
+
+  _startCharge() async {
+    var values = await APIService.initTransaction(APIService.secretKey);
+
+    Charge _charge = Charge()
+      ..email = _customerEmailController.text
+      ..accessCode = values['data']['access_code']
+      ..amount = 92001
+      ..card = _getCardFromUI();
+
+    await PaystackPlugin.chargeCard(context,
+        charge: _charge,
+        beforeValidate: (transaction) => handleBeforeValidate(transaction),
+        onSuccess: (transaction) => handleOnSuccess(transaction),
+        onError: (error, transaction) => handleOnError(error, transaction));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +159,9 @@ class CustomUICheckoutScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10)),
                     color: Colors.blue,
                     textColor: Colors.white,
-                    onPressed: () async {},
+                    onPressed: () async {
+                      _startCharge();
+                    },
                     child: Center(
                       child: _hasTransactionStarted
                           ? CircularProgressIndicator(
@@ -132,5 +176,25 @@ class CustomUICheckoutScreen extends StatelessWidget {
             ),
           ),
         ));
+  }
+
+  handleOnSuccess(Transaction transaction) {
+    setState(() {
+      _hasTransactionStarted = false;
+    });
+    AppDialogs.showSuccessDialog(context, transaction.message);
+  }
+
+  handleBeforeValidate(Transaction transaction) {
+    print(transaction.message);
+  }
+
+  handleOnError(Object error, Transaction transaction) {
+    setState(() {
+      _hasTransactionStarted = false;
+    });
+    print(transaction.message);
+    print(error);
+    AppDialogs.showErrorDialog(context, transaction.message);
   }
 }

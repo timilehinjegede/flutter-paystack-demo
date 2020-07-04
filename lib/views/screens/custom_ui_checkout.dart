@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:paystack_demo/services/api_service.dart';
 import 'package:paystack_demo/views/widgets/dialogs.dart';
@@ -104,6 +105,7 @@ class _CustomUICheckoutScreenState extends State<CustomUICheckoutScreen> {
                 ),
                 TextFormField(
                   controller: _cardNumberController,
+                  inputFormatters: <TextInputFormatter>[],
                   decoration: InputDecoration(
                     labelText: 'Card Number',
                     hintText: '0000 0000 0000 0000',
@@ -136,6 +138,10 @@ class _CustomUICheckoutScreenState extends State<CustomUICheckoutScreen> {
                     ),
                     Expanded(
                       child: TextFormField(
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(3),
+                          WhitelistingTextInputFormatter.digitsOnly,
+                        ],
                         controller: _cvvController,
                         decoration: InputDecoration(
                           labelText: 'CVV',
